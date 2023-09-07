@@ -1,4 +1,4 @@
-# Introduction
+# Monocular-Multi-view-Structure-from-Motion-SFM-with-Bundle-Adjustment
 This project focuses on reconstructing a 3D scene from a set of 2D images, a process known as Structure from Motion (SfM). The goal is to understand and implement the steps involved in SfM, inspired by the work of Agarwal et. al in "Building Rome in a Day" and tools like Microsoft Photosynth and VisualSFM.
 
 ## Steps Involved in SfM:
