@@ -67,7 +67,6 @@ You can compare your results against the output from Visual SfM. Sample outputs 
 ### Epipoles and Epipolar Lines
 ![epipolar](Outputs/epipolar_1-2_new.png)
 
-
 ### Linear Triangulation
 ![Triangulation_1](Outputs/linear_triangulation_1.png)
 
@@ -81,5 +80,3 @@ You can compare your results against the output from Visual SfM. Sample outputs 
 
 ## References
 - Agarwal et. al, "Building Rome in a Day".
-- VisualSFM: [Download here](https://user-images.githubusercontent.com/63463655/236314227-9ccb62e4-fa8e-4f85-ae54-ef4660ceb949.png).
-
