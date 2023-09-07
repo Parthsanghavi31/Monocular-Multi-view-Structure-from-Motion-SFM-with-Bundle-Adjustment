@@ -46,7 +46,6 @@ Refine the camera poses and 3D points together by minimizing reprojection error.
 - `BundleAdjustment.py`: Implements the bundle adjustment method.
 - `BuildVisibilityMatrix.py`: Constructs the visibility matrix.
 
-
 ## Instructions
 1. Clone the repository.
 2. Ensure you have all the required libraries and dependencies installed.
