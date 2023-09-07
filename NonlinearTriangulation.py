@@ -1,52 +1,44 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Oct 23 14:26:26 2022
+
+@author: dushyant
+"""
+
 import numpy as np
-from IPython import embed
+import scipy
+from scipy import optimize
 from scipy.optimize import least_squares
 
-
-
-def non_linear_triangulation(inlier_matches, X_world, R1, C1, R2, C2, K):
+def reprojection_error(World_point, P, P_dash, inlsrc_pt, inldst_pt, K):
+    #total_error = 0
+    #print('world point', World_point)
+    #print('np check', np.dot(K,P))
+    X_proj_src = np.dot(np.dot(K,P), World_point)
+    X_proj_src = X_proj_src/X_proj_src[2]
+    err_src_x = -inlsrc_pt[0] + X_proj_src[0]
+    err_src_y = -inlsrc_pt[1] + X_proj_src[1]
+    err_src = np.sqrt(err_src_x**2 + err_src_y**2)
     
-    T1 = -1 * np.dot(R1, C1)
-    P1 = np.dot(K, np.hstack((R1, T1)))
+    X_proj_dst = np.dot(np.dot(K,P_dash), World_point)
+    X_proj_dst = X_proj_src/X_proj_src[2]
+    err_dst_x = -inldst_pt[0] + X_proj_dst[0]
+    err_dst_y = -inldst_pt[1] + X_proj_dst[1]
+    err_dst = np.sqrt(err_dst_x**2 + err_dst_y**2)
+    error = err_dst + err_src
 
-    C2 = np.expand_dims(C2, 1)
-    T2 = -1 * np.dot(R2, C2)
-    P2 = np.dot(K, np.hstack((R2, T2)))
-
-    count = 0
-    X3D_new = []
-    for i in range(len(X_world)):
-        result_x = least_squares(calculate_reprojection_error, x0=X_world[i], args=[inlier_matches[i], P1, P2])
-        # loss='soft_l1',
-        # if result_x.success:
-        #     print(result_x.fun)
-        #     count += 1
-        # else:
-        #     print("False: ", result_x.fun)
-
-        X3D_new.append(result_x.x)
-    
-    return np.array(X3D_new)
-
-
-def calculate_reprojection_error(X, feature_pair, P1, P2):
-    
-    error1 = calculate_image_error(feature_pair[0], X, P1)
-    error2 = calculate_image_error(feature_pair[1], X, P2)
-    total_error = error1 + error2
-
-    return total_error
-
-
-def calculate_image_error(uv, X, P):
-    uv = np.concatenate((uv, np.array([1])))
-    uv = np.expand_dims(uv, 1)
-    X = np.concatenate((X, np.array([1])))
-    X = np.expand_dims(X, 1)
-
-    uv_tilda = P @ X
-    uv_tilda = uv_tilda / uv_tilda[2]
-    diff = uv - uv_tilda
-    error = diff[0]**2 + diff[1]**2
     return error
+
+def NonlinearTriangulation(P, P_dash, inlsrc_pts, inldst_pts, World_points_test, K):
+    optimized_world_points = []
+    for i in range(len(World_points_test)):
+        optimized_param_list = scipy.optimize.least_squares(reprojection_error, World_points_test[i], ftol = 0.0001, xtol = 0.0001, args = [P, P_dash, inlsrc_pts[i], inldst_pts[i], K])
+        optimized_world_point = optimized_param_list.x
+        optimized_world_point = optimized_world_point/ optimized_world_point[3]
+        optimized_world_points.append(optimized_world_point)
+        
+        #reprojection_error(P, P_dash, inlsrc_pts[i], inldst_pts[i], World_points[i], K)
+    
+    return optimized_world_points
 

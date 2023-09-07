@@ -1,45 +1,36 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Oct 23 13:50:52 2022
+
+@author: dushyant
+"""
+
 import numpy as np
-from IPython import embed
+def LinearTriangulation(inlsrc_pts, inldst_pts, P, P_dash, K):
+    World_points = []
+    P = np.dot(K,P)
+    P_dash = np.dot(K,P_dash)
+    P_dash_row1 = P_dash[0]
+    P_dash_row2 = P_dash[1]
+    P_dash_row3 = P_dash[2]
 
+    P_row1 = P[0], 
+    P_row2 = P[1], 
+    P_row3 = P[2]
+    for i in range(len(inlsrc_pts)):
+        x,y = inlsrc_pts[i]
+        x_dash, y_dash = inldst_pts[i]
 
-def skew(x):
-    return np.array([[0, -x[2], x[1]],
-                     [x[2], 0, -x[0]],
-                     [-x[1], x[0], 0]])
+        A_triang = np.zeros([4,4])
+        A_triang[0] = x*P_row3 - P_row1
+        A_triang[1] = y*P_row3 - P_row2
+        A_triang[2] = x_dash*P_dash_row3 - P_dash_row1
+        A_triang[3] = y_dash*P_dash_row3 - P_dash_row2
+        
+        U_triang, S_triang, V_triang = np.linalg.svd(A_triang)
+        X_real_world = V_triang[-1]
+        X_real_world = X_real_world/ (X_real_world[3])
+        World_points.append(X_real_world)
 
-
-def triangulation(R1,C1,R2,C2,x,K):
-    # Homogeneous Coordinates
-    # x1h = np.append(x1,1)
-    # x2h = np.append(x2,1)
-    x1 = np.array([p[0] for p in x])
-    x2 = np.array([p[1] for p in x])
-
-    C1 = C1.reshape((3,1))
-    T1 = -R1.dot(C1) 
-    P1 = K@np.hstack((R1,T1))
-    C2 = C2.reshape((3,1))
-    T2 = -R2.dot(C2) 
-    P2 = K@np.hstack((R2,T2))
-    
-    Xn = []
-    
-    for u,v in zip(x1,x2):
-        uh = np.append(u,1)
-        vh = np.append(v,1)
-        # embed()
-        A1 = skew(uh)@P1
-        A2 = skew(vh)@P2
-        A = np.vstack((A1,A2))
-
-        U,S,V = np.linalg.svd(A)
-        X = V[np.argmin(S),:]
-        X = X/X[3]
-        Xn.append(X[0:3])
-    Xn = np.array(Xn)
-    # print(Xn)
-    return Xn
-
-    
-
-    
+    return World_points
