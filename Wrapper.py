@@ -1,10 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Nov  3 02:32:48 2022
 
-@author: dushyant
-"""
 import numpy as np
 import cv2 as cv
 import copy
