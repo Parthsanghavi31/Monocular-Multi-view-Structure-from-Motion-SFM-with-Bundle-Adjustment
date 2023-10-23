@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Oct 25 21:51:57 2022
-
-@author: dushyant
-"""
-
 import numpy as np
 def BuildVisibilityMatrix(World_points, common_worldpoints_13, list_len1, list_len2):    
     Vis_Mat = np.zeros([3,len(World_points)])
